@@ -1,3 +1,3 @@
 # Test Car Application
 
-Working with API's and sqlite in Next.js 
+Creating API's using Next.js, authentication of users with JWT and bcrypt, and storing data with sqlite3.

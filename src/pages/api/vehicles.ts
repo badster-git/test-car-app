@@ -2,14 +2,16 @@ import { NextApiRequest, NextApiResponse } from "next";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 
-export async function openDb() {
+import { authenticated } from "../../../api/Authenticate";
+
+async function openDb() {
   return open({
     filename: "/tmp/mydb.sqlite",
     driver: sqlite3.Database,
   });
 }
 
-export default async function getAllVehicles(
+export default authenticated(async function getAllVehicles(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -19,4 +21,4 @@ export default async function getAllVehicles(
   const db = await openDb();
   const vehicles = await db.all("SELECT * FROM Vehicles");
   res.json(vehicles);
-}
+});
