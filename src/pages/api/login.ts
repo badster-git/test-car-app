@@ -3,6 +3,7 @@ import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
+import cookie from "cookie";
 
 async function openDb() {
   return open({
@@ -11,10 +12,7 @@ async function openDb() {
   });
 }
 
-export default async function login(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function login(req: NextApiRequest, res: NextApiResponse) {
   const db = await openDb();
 
   if (req.method === "POST") {
@@ -28,7 +26,17 @@ export default async function login(
           const jwt = sign(claims, `${process.env.SECRET_KEY}`, {
             expiresIn: "1h",
           });
-          res.json({ authToken: jwt });
+          res.setHeader(
+            "Set-Cookie",
+            cookie.serialize("auth", jwt, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV !== "development",
+              sameSite: "strict",
+              maxAge: 3600,
+              path: "/",
+            })
+          );
+          res.json({ message: "Welcome back to the app!" });
         } else {
           res.json({ message: "Oops! Something went wrong!" });
         }

@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse, NextApiHandler } from "next";
 export const authenticated =
   (fn: NextApiHandler) => async (req: NextApiRequest, res: NextApiResponse) => {
     verify(
-      req.headers.authorization!,
+      req.cookies.auth!,
       `${process.env.SECRET_KEY}`,
       async function (err, decoded) {
         if (!err && decoded) {
